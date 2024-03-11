@@ -25,7 +25,7 @@ export default function Header() {
         />
       </form>
       <Button
-        className="w-12 h-10 lg:hidden"
+        className="w-12 h-8 lg:hidden"
         color="gray"
         pill
       >
@@ -40,7 +40,12 @@ export default function Header() {
           <FaMoon />
         </Button>
         <Link to="/sign-in">
-          <Button gradientDuoTone="purpleToBlue">Zaloguj się</Button>
+          <Button
+            gradientDuoTone="purpleToBlue"
+            outline
+          >
+            Zaloguj się
+          </Button>
         </Link>
         <Navbar.Toggle />
       </div>
