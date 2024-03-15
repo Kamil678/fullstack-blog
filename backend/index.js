@@ -13,6 +13,17 @@ app.use(express.json());
 app.use("/api/user", userRoutes);
 app.use("/api/auth", authRoutes);
 
+app.use((err, req, res, next) => {
+  const errStatusCode = err.statusCode || 500;
+  const errMessage = err.message || "Internl server error";
+
+  res.status(errStatusCode).json({
+    success: false,
+    errStatusCode,
+    errMessage,
+  });
+});
+
 app.listen(3000, () => {
   console.log("Server is running on port 3000!!!!!");
   mongoose
