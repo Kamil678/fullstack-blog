@@ -10,6 +10,18 @@ const app = express();
 
 app.use(express.json());
 
+app.listen(3000, () => {
+  console.log("Server is running on port 3000!!!!!");
+  mongoose
+    .connect(process.env.MONGO_CONNECTION)
+    .then(() => {
+      console.log("MongoDB is connected");
+    })
+    .catch((err) => {
+      console.log(err);
+    });
+});
+
 app.use("/api/user", userRoutes);
 app.use("/api/auth", authRoutes);
 
@@ -22,16 +34,4 @@ app.use((err, req, res, next) => {
     errStatusCode,
     errMessage,
   });
-});
-
-app.listen(3000, () => {
-  console.log("Server is running on port 3000!!!!!");
-  mongoose
-    .connect(process.env.MONGO_CONNECTION)
-    .then(() => {
-      console.log("MongoDB is connected");
-    })
-    .catch((err) => {
-      console.log(err);
-    });
 });
