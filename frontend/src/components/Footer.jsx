@@ -15,7 +15,7 @@ export default function FooterComponent() {
       <div className="grid grid-cols-2 gap-3 sm:mt-4 sm:grid-cols-3 sm:gap-6">
         <div>
           <Footer.Title
-            title="Informacje"
+            title="Informacjee"
             className="mb-2"
           />
           <Footer.LinkGroup col>
