@@ -56,7 +56,7 @@ export default function Signup() {
   };
 
   return (
-    <div className="min-h-screen mt-20">
+    <div className="min-h-screen mt-60">
       <div className="max-w-7xl p-3 mx-auto flex flex-col md:flex-row md:items-center gap-5">
         <div className="flex-1">
           <Logo textSize="text-4xl" />
