@@ -25,27 +25,27 @@ export const signup = async (req, res, next) => {
 export const signin = async (req, res, next) => {
   const {email, password} = req.body
 
-  if(!username || !password){
+  if(!email || !password){
     next(errorHandler(400, 'Wszystkie pola są wymagane!'))
   }
 
   try{
-    const user = User.findOne({email})
+    const user = await User.findOne({email})
 
     if(!user){
       return next(errorHandler(404, 'Nie znaleziono takiego użytkownika.'))
     }
 
-    const password = bcryptjs.compareSync(password, user.password)
+    const checkedPassword = bcryptjs.compareSync(password, user.password)
 
-    if(!password){
+    if(!checkedPassword){
       return next(errorHandler(400, 'Niepoprawne hasło.'))
     }
 
     const token = jwt.sign({userId:user._id, username:user.username}, "somesupersecretsecret", {expiresIn:'1h'});
     const {password:pass, ...responseUser} = user._doc
 
-    res.status(200).cookie('token', token, {httpOnly:true, SameSite:'strict'}).json(responseUser);
+    res.status(200).cookie('token', token, {httpOnly:true}).json(responseUser);
   } catch(err){
     next(err);
   }
