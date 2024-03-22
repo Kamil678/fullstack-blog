@@ -20,8 +20,8 @@ export default function GoogleAuth() {
       const result = await signInWithPopup(auth, provider)
       
       const response = await fetch('/api/auth/google', {
-        method: 'POST',
-        headers:{'Content-Type':'applications/json'},
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body:JSON.stringify({
           name:result.user.displayName,
           email:result.user.email,
