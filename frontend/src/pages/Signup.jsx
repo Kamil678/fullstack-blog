@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import Logo from "../components/Logo";
 import { Alert, Button, Label, Spinner, TextInput } from "flowbite-react";
 import { Link, useNavigate } from "react-router-dom";
+import GoogleAuth from "../components/GoogleAuth";
 
 export default function Signup() {
   const [formData, setFormData] = useState({});
@@ -95,7 +96,7 @@ export default function Signup() {
               />
             </div>
             <Button
-              gradientDuoTone="purpleToPink"
+              gradientDuoTone="purpleToBlue"
               type="submit"
               disabled={loading}
             >
@@ -108,6 +109,7 @@ export default function Signup() {
                 "Stwórz konto"
               )}
             </Button>
+            <GoogleAuth/>
           </form>
           <div className="flex gap-1 text-sm mt-5">
             <span>Masz już konto?</span>

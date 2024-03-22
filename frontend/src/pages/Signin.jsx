@@ -4,6 +4,7 @@ import { Alert, Button, Label, Spinner, TextInput } from "flowbite-react";
 import { Link, useNavigate } from "react-router-dom";
 import {useDispatch, useSelector} from 'react-redux'
 import { startSignIn, successSignIn, failureSignIn } from "../app/user/userSlice";
+import GoogleAuth from "../components/GoogleAuth";
 
 export default function SignIn() {
   const [formData, setFormData] = useState({});
@@ -86,7 +87,7 @@ export default function SignIn() {
               />
             </div>
             <Button
-              gradientDuoTone="purpleToPink"
+              gradientDuoTone="purpleToBlue"
               type="submit"
               disabled={loading}
             >
@@ -99,6 +100,7 @@ export default function SignIn() {
                 "Zaloguj się"
               )}
             </Button>
+            <GoogleAuth></GoogleAuth>
           </form>
           <div className="flex gap-1 text-sm mt-5">
             <span>Nie masz jeszcze konta?</span>
