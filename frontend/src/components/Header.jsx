@@ -2,14 +2,17 @@ import { Avatar, Button, Dropdown, DropdownDivider, DropdownHeader, DropdownItem
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { AiOutlineSearch } from "react-icons/ai";
-import { FaMoon, FaUser } from "react-icons/fa";
+import { FaMoon, FaUser, FaSun } from "react-icons/fa";
 import { MdEmail } from "react-icons/md";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { toggleMode } from "../app/mode/modeSlice";
 import Logo from "./Logo";
 
 export default function Header() {
   const path = useLocation().pathname;
+  const dispatch = useDispatch();
   const { user } = useSelector((state) => state.user);
+  const { mode } = useSelector((state) => state.mode);
 
   return (
     <Navbar className="border-b-2">
@@ -34,8 +37,9 @@ export default function Header() {
           className="w-12 h-10 hidden sm:inline"
           color="gray"
           pill
+          onClick={() => dispatch(toggleMode())}
         >
-          <FaMoon />
+          {mode === "light" ? <FaMoon /> : <FaSun />}
         </Button>
         {user ? (
           <Dropdown
