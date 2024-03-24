@@ -8,6 +8,7 @@ import Signin from "./pages/Signin";
 import Signup from "./pages/Signup";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
+import LoggedInRoute from "./components/LoggedInRoute";
 
 export default function App() {
   return (
@@ -30,10 +31,12 @@ export default function App() {
           path="/about"
           element={<About />}
         />
-        <Route
-          path="/dashboard"
-          element={<Dashboard />}
-        />
+        <Route element={<LoggedInRoute />}>
+          <Route
+            path="/dashboard"
+            element={<Dashboard />}
+          />
+        </Route>
         <Route
           path="/projects"
           element={<Projects />}
