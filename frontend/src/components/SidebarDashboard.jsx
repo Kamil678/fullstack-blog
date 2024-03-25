@@ -16,7 +16,7 @@ export default function SidebarDashboard() {
   }, [location.search]);
 
   return (
-    <Sidebar className=" w-full">
+    <Sidebar className=" w-full md:w-56">
       <SidebarItems>
         <SidebarItemGroup>
           <Link to="/dashboard?tab=profile">
