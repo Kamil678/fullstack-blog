@@ -25,6 +25,7 @@ export default function SidebarDashboard() {
               icon={HiUser}
               label={"User"}
               labelColor="dark"
+              as="div"
             >
               Profil
             </SidebarItem>
