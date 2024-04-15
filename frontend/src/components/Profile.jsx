@@ -12,7 +12,6 @@ export default function Profile() {
   const [uploadImageUrl, setUploadImageUrl] = useState(null);
   const [uploadingProgress, setUploadingProgress] = useState(0);
   const [uploadingError, setUploadingError] = useState(null);
-  console.log(uploadingProgress, uploadingError);
   const filePickerRef = useRef();
 
   const onUploadImage = (e) => {
@@ -39,6 +38,7 @@ export default function Profile() {
     const fileName = new Date().getTime() + uploadImage.name;
     const storageRef = ref(storage, fileName);
     const upload = uploadBytesResumable(storageRef, uploadImage);
+    setUploadingError(null);
 
     upload.on(
       "state_changed",
@@ -48,6 +48,9 @@ export default function Profile() {
       },
       (err) => {
         setUploadingError("Nie udało się zapisać zdjęcia (Plik musi być formatu odpowiedniego dla zdjęcia i mniejszy niż 2MB)");
+        setUploadingProgress(0);
+        setUploadImage(null);
+        setUploadImageUrl(null);
       },
       () => {
         getDownloadURL(upload.snapshot.ref).then((url) => {
