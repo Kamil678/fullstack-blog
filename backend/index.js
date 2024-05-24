@@ -29,10 +29,12 @@ app.use("/api/auth", authRoutes);
 app.use((err, req, res, next) => {
   const errStatusCode = err.statusCode || 500;
   const errMessage = err.message || "Internl server error";
+  const errException = err.exception;
 
   res.status(errStatusCode).json({
     success: false,
     errStatusCode,
     errMessage,
+    errException,
   });
 });

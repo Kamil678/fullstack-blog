@@ -1,17 +1,23 @@
 import { Alert, Button, TextInput } from "flowbite-react";
 import { useState, useRef, useEffect } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { getDownloadURL, getStorage, uploadBytesResumable, ref } from "firebase/storage";
 import { app } from "../firebase";
 import { CircularProgressbar } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
+import { startUpdate, updateSuccess, updateFailure } from "../app/user/userSlice";
 
 export default function Profile() {
+  const dispatch = useDispatch();
   const { user } = useSelector((state) => state.user);
   const [uploadImage, setUploadImage] = useState(null);
   const [uploadImageUrl, setUploadImageUrl] = useState(null);
   const [uploadingProgress, setUploadingProgress] = useState(0);
   const [uploadingError, setUploadingError] = useState(null);
+  const [uploading, setUploading] = useState(false);
+  const [updateUserSuccess, setUpdateUserSuccess] = useState(null);
+  const [updateUserError, setUpdateUserError] = useState(null);
+  const [formData, setFormData] = useState({});
   const filePickerRef = useRef();
 
   const onUploadImage = (e) => {
@@ -34,11 +40,12 @@ export default function Profile() {
     //     }
     //   }
     // }
+    setUploading(true);
+    setUploadingError(null);
     const storage = getStorage(app);
     const fileName = new Date().getTime() + uploadImage.name;
     const storageRef = ref(storage, fileName);
     const upload = uploadBytesResumable(storageRef, uploadImage);
-    setUploadingError(null);
 
     upload.on(
       "state_changed",
@@ -51,10 +58,13 @@ export default function Profile() {
         setUploadingProgress(0);
         setUploadImage(null);
         setUploadImageUrl(null);
+        setUploading(false);
       },
       () => {
         getDownloadURL(upload.snapshot.ref).then((url) => {
           setUploadImageUrl(url);
+          setFormData({ ...formData, picture: url });
+          setUploading(false);
         });
       }
     );
@@ -66,10 +76,56 @@ export default function Profile() {
     }
   }, [uploadImage]);
 
+  const handleChangeInput = (e) => {
+    setFormData({ ...formData, [e.target.id]: e.target.value });
+  };
+
+  const handleSubmitForm = async (e) => {
+    e.preventDefault();
+    setUpdateUserError(null);
+    setUpdateUserSuccess(null);
+
+    if (Object.keys(formData).length === 0) {
+      setUpdateUserError("Nie wprowadzono żadnych zmian.");
+      return;
+    }
+
+    if (uploading) {
+      setUpdateUserError("Zaczekaj na załadowanie zdjęcia.");
+      return;
+    }
+
+    try {
+      dispatch(startUpdate());
+
+      const response = await fetch(`api/user/update/${user._id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(formData),
+      });
+
+      const responseData = await response.json();
+
+      if (response.ok) {
+        dispatch(updateSuccess(responseData));
+        setUpdateUserSuccess("Pomyślnie zaaktualizowno dane użytkownika.");
+      } else {
+        dispatch(updateFailure(responseData.errMessage));
+        setUpdateUserError(responseData.errMessage);
+      }
+    } catch (err) {
+      dispatch(updateFailure(err.errMessage));
+      setUpdateUserError(err.errMessage);
+    }
+  };
+
   return (
     <div className="max-w-lg mx-auto p-3 w-full">
       <h1 className="my-7 text-center font-semibold text-3xl">Profil</h1>
-      <form className="flex flex-col gap-4 items-center">
+      <form
+        onSubmit={handleSubmitForm}
+        className="flex flex-col gap-4 items-center"
+      >
         <input
           type="file"
           accept="image/*"
@@ -115,6 +171,7 @@ export default function Profile() {
           placeholder="Email"
           defaultValue={user.email}
           className="w-full"
+          onChange={handleChangeInput}
         />
         <TextInput
           type="text"
@@ -122,12 +179,14 @@ export default function Profile() {
           placeholder="Nazwa użytkownika"
           defaultValue={user.username}
           className="w-full"
+          onChange={handleChangeInput}
         />
         <TextInput
           type="password"
           id="password"
           placeholder="Hasło"
           className="w-full"
+          onChange={handleChangeInput}
         />
         <Button
           type="submit"
@@ -142,6 +201,24 @@ export default function Profile() {
         <button className="bg-transparent">Usuń konto</button>
         <button className="bg-transparent">Wyloguj się</button>
       </div>
+      {updateUserSuccess && (
+        <Alert
+          color="success"
+          className="mt-5"
+          onDismiss={() => setUpdateUserSuccess(null)}
+        >
+          {updateUserSuccess}
+        </Alert>
+      )}
+      {updateUserError && (
+        <Alert
+          color="failure"
+          className="mt-5"
+          onDismiss={() => setUpdateUserError(null)}
+        >
+          {updateUserError}
+        </Alert>
+      )}
     </div>
   );
 }

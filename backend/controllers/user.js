@@ -1,14 +1,13 @@
 import bcryptjs from "bcryptjs";
-import User from "../models/user";
-import { errorHandler } from "../utils/error";
+import User from "../models/user.js";
+import { errorHandler } from "../utils/error.js";
 
 export const testUser = (req, res) => {
   res.json({ message: "API działa!!!!" });
 };
 
 export const updateUser = async (req, res, next) => {
-  console.log(req.user);
-  if (req.user.id !== req.params.userId) {
+  if (req.user.userId !== req.params.userId) {
     return next(errorHandler(403, "You are not allowed to update this user.", "Nie masz uprawnień do aktualizowania tego użytkownika."));
   }
 
@@ -28,25 +27,29 @@ export const updateUser = async (req, res, next) => {
     if (req.body.username.includes(" ")) {
       return next(errorHandler(400, "Username cannot contain spaces.", "Nazwa użytkownika nie może zawierać spacji."));
     }
+  }
 
-    try {
-      const updateUser = await User.findByIdAndUpdate(
-        req.params.userId,
-        {
-          $set: {
-            username: req.body.username,
-            email: req.body.email,
-            profilePicture: req.body.profilePicture,
-            password: req.body.password,
-          },
+  if (req.body.username === "") {
+    return next(errorHandler(400, "Username cannot be empty.", "Nazwa użytkownika nie może być pusta."));
+  }
+
+  try {
+    const updateUser = await User.findByIdAndUpdate(
+      req.params.userId,
+      {
+        $set: {
+          username: req.body.username,
+          email: req.body.email,
+          picture: req.body.picture,
+          password: req.body.password,
         },
-        { new: true }
-      );
+      },
+      { new: true }
+    );
 
-      const { password, ...rest } = updateUser._doc;
-      res.status(200).json(rest);
-    } catch (err) {
-      next(err);
-    }
+    const { password, ...rest } = updateUser._doc;
+    res.status(200).json(rest);
+  } catch (err) {
+    next(err);
   }
 };
