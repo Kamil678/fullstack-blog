@@ -6,6 +6,7 @@ import { FaMoon, FaUser, FaSun } from "react-icons/fa";
 import { MdEmail } from "react-icons/md";
 import { useSelector, useDispatch } from "react-redux";
 import { toggleMode } from "../app/mode/modeSlice";
+import { signoutSuccess } from "../app/user/userSlice";
 import Logo from "./Logo";
 
 export default function Header() {
@@ -13,6 +14,24 @@ export default function Header() {
   const dispatch = useDispatch();
   const { user } = useSelector((state) => state.user);
   const { mode } = useSelector((state) => state.mode);
+
+  const handleSignout = async () => {
+    try {
+      const response = await fetch("api/auth/signout", {
+        method: "POST",
+      });
+
+      const responseData = await response.json();
+
+      if (response.ok) {
+        dispatch(signoutSuccess());
+      } else {
+        console.log(responseData.message);
+      }
+    } catch (err) {
+      console.log(err.errMessage);
+    }
+  };
 
   return (
     <Navbar className="border-b-2">
@@ -66,7 +85,7 @@ export default function Header() {
               <DropdownItem>Profil</DropdownItem>
             </Link>
             <DropdownDivider />
-            <DropdownItem>Wyloguj się</DropdownItem>
+            <DropdownItem onClick={handleSignout}>Wyloguj się</DropdownItem>
           </Dropdown>
         ) : (
           <Link to="/sign-in">

@@ -83,3 +83,11 @@ export const googleLogin = async (req, res, next) => {
     next(err);
   }
 };
+
+export const signout = async (req, res, next) => {
+  try {
+    res.clearCookie("token").status(200).json("Pomyślnie wylogowano użytkownika");
+  } catch (err) {
+    next(err);
+  }
+};

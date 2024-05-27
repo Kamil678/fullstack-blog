@@ -5,7 +5,7 @@ import { getDownloadURL, getStorage, uploadBytesResumable, ref } from "firebase/
 import { app } from "../firebase";
 import { CircularProgressbar } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
-import { startUpdate, updateSuccess, updateFailure, startDelete, deleteFailure, deleteSuccess } from "../app/user/userSlice";
+import { startUpdate, updateSuccess, updateFailure, startDelete, deleteFailure, deleteSuccess, signoutSuccess } from "../app/user/userSlice";
 import { HiOutlineExclamationCircle } from "react-icons/hi";
 
 export default function Profile() {
@@ -126,7 +126,6 @@ export default function Profile() {
 
     try {
       dispatch(startDelete());
-      console.log("ppp");
       const response = await fetch(`api/user/delete/${user._id}`, {
         method: "DELETE",
       });
@@ -140,6 +139,24 @@ export default function Profile() {
       }
     } catch (err) {
       dispatch(deleteFailure(err.errMessage));
+    }
+  };
+
+  const handleSignout = async () => {
+    try {
+      const response = await fetch("api/auth/signout", {
+        method: "POST",
+      });
+
+      const responseData = await response.json();
+
+      if (response.ok) {
+        dispatch(signoutSuccess());
+      } else {
+        console.log(responseData.message);
+      }
+    } catch (err) {
+      console.log(err.errMessage);
     }
   };
 
@@ -228,7 +245,12 @@ export default function Profile() {
         >
           Usuń konto
         </button>
-        <button className="bg-transparent">Wyloguj się</button>
+        <button
+          onClick={handleSignout}
+          className="bg-transparent"
+        >
+          Wyloguj się
+        </button>
       </div>
       {updateUserSuccess && (
         <Alert
