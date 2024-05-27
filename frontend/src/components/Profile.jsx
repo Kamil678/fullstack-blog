@@ -1,15 +1,16 @@
-import { Alert, Button, TextInput } from "flowbite-react";
+import { Alert, Button, TextInput, Modal } from "flowbite-react";
 import { useState, useRef, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { getDownloadURL, getStorage, uploadBytesResumable, ref } from "firebase/storage";
 import { app } from "../firebase";
 import { CircularProgressbar } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
-import { startUpdate, updateSuccess, updateFailure } from "../app/user/userSlice";
+import { startUpdate, updateSuccess, updateFailure, startDelete, deleteFailure, deleteSuccess } from "../app/user/userSlice";
+import { HiOutlineExclamationCircle } from "react-icons/hi";
 
 export default function Profile() {
   const dispatch = useDispatch();
-  const { user } = useSelector((state) => state.user);
+  const { user, error } = useSelector((state) => state.user);
   const [uploadImage, setUploadImage] = useState(null);
   const [uploadImageUrl, setUploadImageUrl] = useState(null);
   const [uploadingProgress, setUploadingProgress] = useState(0);
@@ -17,6 +18,7 @@ export default function Profile() {
   const [uploading, setUploading] = useState(false);
   const [updateUserSuccess, setUpdateUserSuccess] = useState(null);
   const [updateUserError, setUpdateUserError] = useState(null);
+  const [showDeleteUserModal, setShowDeleteUserModal] = useState(null);
   const [formData, setFormData] = useState({});
   const filePickerRef = useRef();
 
@@ -119,6 +121,28 @@ export default function Profile() {
     }
   };
 
+  const handleConfirmDeleteUser = async () => {
+    setShowDeleteUserModal(false);
+
+    try {
+      dispatch(startDelete());
+      console.log("ppp");
+      const response = await fetch(`api/user/delete/${user._id}`, {
+        method: "DELETE",
+      });
+
+      const responseData = await response.json();
+
+      if (response.ok) {
+        dispatch(deleteSuccess(responseData));
+      } else {
+        dispatch(deleteFailure(responseData.message));
+      }
+    } catch (err) {
+      dispatch(deleteFailure(err.errMessage));
+    }
+  };
+
   return (
     <div className="max-w-lg mx-auto p-3 w-full">
       <h1 className="my-7 text-center font-semibold text-3xl">Profil</h1>
@@ -198,7 +222,12 @@ export default function Profile() {
         </Button>
       </form>
       <div className="text-red-500 flex justify-between mt-10">
-        <button className="bg-transparent">Usuń konto</button>
+        <button
+          className="bg-transparent"
+          onClick={() => setShowDeleteUserModal(true)}
+        >
+          Usuń konto
+        </button>
         <button className="bg-transparent">Wyloguj się</button>
       </div>
       {updateUserSuccess && (
@@ -219,6 +248,43 @@ export default function Profile() {
           {updateUserError}
         </Alert>
       )}
+      <Modal
+        show={showDeleteUserModal}
+        size="md"
+        onClose={() => setShowDeleteUserModal(false)}
+        popup
+      >
+        <Modal.Header />
+        <Modal.Body>
+          <div className="text-center">
+            <HiOutlineExclamationCircle className="mx-auto mb-4 h-14 w-14 text-gray-400 dark:text-gray-200" />
+            <h3 className="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">Czy jesteś pewien, że chcesz usunąć tego użytkownika?</h3>
+            <div className="flex justify-center gap-4">
+              <Button
+                color="failure"
+                onClick={handleConfirmDeleteUser}
+              >
+                Tak
+              </Button>
+              <Button
+                color="gray"
+                onClick={() => setShowDeleteUserModal(false)}
+              >
+                Nie
+              </Button>
+            </div>
+          </div>
+        </Modal.Body>
+      </Modal>
+      {/* {error && (
+        <Alert
+          color="failure"
+          className="mt-5"
+          onDismiss={() => setUpdateUserError(null)}
+        >
+          {error}
+        </Alert>
+      )} */}
     </div>
   );
 }
