@@ -42,7 +42,7 @@ export const signin = async (req, res, next) => {
       return next(errorHandler(400, "Incorrect password.", "Niepoprawne hasło."));
     }
 
-    const token = jwt.sign({ userId: user._id, username: user.username }, process.env.JWT_SECRET, { expiresIn: "1h" });
+    const token = jwt.sign({ userId: user._id, username: user.username, isAdmin:user.isAdmin}, process.env.JWT_SECRET, { expiresIn: "1h" });
     const { password: pass, ...responseUser } = user._doc;
 
     res.status(200).cookie("token", token, { httpOnly: true }).json(responseUser);
@@ -58,7 +58,7 @@ export const googleLogin = async (req, res, next) => {
     const user = await User.findOne({ email });
 
     if (user) {
-      const token = jwt.sign({ id: user._id }, "somesupersecretsecret", { expiresIn: "1h" });
+      const token = jwt.sign({ id: user._id, isAdmin: user.isAdmin}, "somesupersecretsecret", { expiresIn: "1h" });
       const { password: pass, ...responseUser } = user._doc;
 
       res.status(200).cookie("token", token, { httpOnly: true }).json(responseUser);
@@ -74,7 +74,7 @@ export const googleLogin = async (req, res, next) => {
 
       await newUser.save();
 
-      const token = jwt.sign({ id: newUser._id }, "somesupersecretsecret", { expiresIn: "1h" });
+      const token = jwt.sign({ id: newUser._id, isAdmin: newUser.isAdmin }, "somesupersecretsecret", { expiresIn: "1h" });
       const { password: pass, ...correctUser } = newUser._doc;
 
       res.status(200).cookie("token", token, { httpOnly: true }).json(correctUser);
