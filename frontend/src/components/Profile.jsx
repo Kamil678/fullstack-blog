@@ -1,16 +1,30 @@
 import { Alert, Button, TextInput, Modal } from "flowbite-react";
 import { useState, useRef, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { getDownloadURL, getStorage, uploadBytesResumable, ref } from "firebase/storage";
+import {
+  getDownloadURL,
+  getStorage,
+  uploadBytesResumable,
+  ref,
+} from "firebase/storage";
 import { app } from "../firebase";
 import { CircularProgressbar } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
-import { startUpdate, updateSuccess, updateFailure, startDelete, deleteFailure, deleteSuccess, signoutSuccess } from "../app/user/userSlice";
+import {
+  startUpdate,
+  updateSuccess,
+  updateFailure,
+  startDelete,
+  deleteFailure,
+  deleteSuccess,
+  signoutSuccess,
+} from "../app/user/userSlice";
 import { HiOutlineExclamationCircle } from "react-icons/hi";
+import { Link } from "react-router-dom";
 
 export default function Profile() {
   const dispatch = useDispatch();
-  const { user, error } = useSelector((state) => state.user);
+  const { user, error, loading } = useSelector((state) => state.user);
   const [uploadImage, setUploadImage] = useState(null);
   const [uploadImageUrl, setUploadImageUrl] = useState(null);
   const [uploadingProgress, setUploadingProgress] = useState(0);
@@ -52,11 +66,14 @@ export default function Profile() {
     upload.on(
       "state_changed",
       (snapshot) => {
-        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        const progress =
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
         setUploadingProgress(progress.toFixed(0));
       },
       (err) => {
-        setUploadingError("Nie udało się zapisać zdjęcia (Plik musi być formatu odpowiedniego dla zdjęcia i mniejszy niż 2MB)");
+        setUploadingError(
+          "Nie udało się zapisać zdjęcia (Plik musi być formatu odpowiedniego dla zdjęcia i mniejszy niż 2MB)"
+        );
         setUploadingProgress(0);
         setUploadImage(null);
         setUploadImageUrl(null);
@@ -202,7 +219,9 @@ export default function Profile() {
           <img
             src={uploadImageUrl || user.picture}
             alt="User picture"
-            className={`rounded-full w-full h-full object-cover border-8 border-[lightgray] ${uploadingProgress && uploadingProgress < 100 && "opacity-60"}`}
+            className={`rounded-full w-full h-full object-cover border-8 border-[lightgray] ${
+              uploadingProgress && uploadingProgress < 100 && "opacity-60"
+            }`}
           />
         </div>
         {uploadingError && <Alert color="failure">{uploadingError}</Alert>}
@@ -234,9 +253,23 @@ export default function Profile() {
           gradientDuoTone="purpleToBlue"
           className="max-w-40 justify-self-center"
           outline
+          disabled={loading || uploading}
         >
-          Zaaktualizuj dane
+          {loading || uploading ? "Aktualizacja..." : "Zaaktualizuj dane"}
         </Button>
+
+        {user.isAdmin && (
+          <Link to={"/create-post"}>
+            <Button
+              type="submit"
+              gradientDuoTone="cyanToBlue"
+              className="max-w-40 justify-self-center"
+              outline
+            >
+              Stwórz post
+            </Button>
+          </Link>
+        )}
       </form>
       <div className="text-red-500 flex justify-between mt-10">
         <button
@@ -245,10 +278,7 @@ export default function Profile() {
         >
           Usuń konto
         </button>
-        <button
-          onClick={handleSignout}
-          className="bg-transparent"
-        >
+        <button onClick={handleSignout} className="bg-transparent">
           Wyloguj się
         </button>
       </div>
@@ -280,12 +310,11 @@ export default function Profile() {
         <Modal.Body>
           <div className="text-center">
             <HiOutlineExclamationCircle className="mx-auto mb-4 h-14 w-14 text-gray-400 dark:text-gray-200" />
-            <h3 className="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">Czy jesteś pewien, że chcesz usunąć tego użytkownika?</h3>
+            <h3 className="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
+              Czy jesteś pewien, że chcesz usunąć tego użytkownika?
+            </h3>
             <div className="flex justify-center gap-4">
-              <Button
-                color="failure"
-                onClick={handleConfirmDeleteUser}
-              >
+              <Button color="failure" onClick={handleConfirmDeleteUser}>
                 Tak
               </Button>
               <Button
