@@ -2,14 +2,16 @@ import React, { useState } from "react";
 import Logo from "../components/Logo";
 import { Alert, Button, Label, Spinner, TextInput } from "flowbite-react";
 import { Link, useNavigate } from "react-router-dom";
-import {useDispatch, useSelector} from 'react-redux'
+import { useDispatch, useSelector } from "react-redux";
 import { startSignIn, successSignIn, failureSignIn } from "../app/user/userSlice";
 import GoogleAuth from "../components/GoogleAuth";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function SignIn() {
   const [formData, setFormData] = useState({});
-  const {loading, error: errMessage} = useSelector(state => state.user)
-  const dispatch = useDispatch()
+  const { loading, error: errMessage } = useSelector((state) => state.user);
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const changeInput = (e) => {
@@ -20,7 +22,7 @@ export default function SignIn() {
     if (message.includes("duplicate key error collection")) {
       return "Użytkownik z takim emeilem lub nazwą już istnieje.";
     } else {
-      return message
+      return message;
     }
   };
 
@@ -28,7 +30,9 @@ export default function SignIn() {
     e.preventDefault();
 
     if (!formData.email || !formData.password) {
-      return dispatch(failureSignIn("Proszę uzupełnić wszystkie wymagane pola."));
+      dispatch(failureSignIn("Proszę uzupełnić wszystkie wymagane pola."));
+      toast.error("Proszę uzupełnić wszystkie wymagane pola.");
+      return;
     }
 
     try {
@@ -43,16 +47,19 @@ export default function SignIn() {
       const data = await response.json();
 
       if (data.success === false) {
-        return dispatch(failureSignIn(data.errMessage));
+        dispatch(failureSignIn(data.errMessage));
+        toast.error(data.errMessage);
+        return;
       }
       //setLoading(false);
 
       if (response.ok) {
-        dispatch(successSignIn(data))
+        dispatch(successSignIn(data));
         navigate("/");
       }
     } catch (err) {
-      dispatch(failureSignIn(err.errMessage))
+      dispatch(failureSignIn(err.errMessage));
+      toast.error(err.errMessage);
     }
   };
 
@@ -111,16 +118,17 @@ export default function SignIn() {
               Stwórz konto
             </Link>
           </div>
-          {errMessage && (
+          {/* {errMessage && (
             <Alert
               className="mt-5"
               color="failure"
             >
               {errMessage}
             </Alert>
-          )}
+          )} */}
         </div>
       </div>
+      <ToastContainer />
     </div>
   );
 }
