@@ -8,11 +8,14 @@ import { getDownloadURL, getStorage, ref, uploadBytesResumable } from "firebase/
 import { app } from "../firebase";
 import { CircularProgressbar } from "react-circular-progressbar";
 import "react-circular-progressbar/dist/styles.css";
+import { useNavigate } from "react-router-dom";
 
 export default function CreatePost() {
   const [file, setFile] = useState(null);
   const [imageUploadProgress, setImageUploadProgress] = useState(null);
   const [formData, setFormData] = useState({});
+
+  const navigate = useNavigate();
 
   const clickUploadImage = async () => {
     try {
@@ -58,18 +61,64 @@ export default function CreatePost() {
       console.log(err);
     }
   };
+
+  const submitCreatePost = async (e) => {
+    e.preventDefault();
+
+    try {
+      const response = await fetch("/api/post/create", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        toast.error("Błąd podczas publikowania posta", {
+          position: "top-right",
+        });
+        console.log(data.message);
+        return;
+      } else {
+        navigate(`/post/${data.post._id}`);
+      }
+
+      if (!data.success) {
+        toast.error(data.message, {
+          position: "top-right",
+        });
+        return;
+      }
+    } catch (err) {
+      toast.error("Błąd podczas publikowania posta", {
+        position: "top-right",
+      });
+      console.log(err.message);
+    }
+  };
+
   return (
     <div className="p-3 max-w-3xl mx-auto min-h-screen">
       <h1 className="my-7 text-center font-semibold text-3xl">Stwórz post</h1>
-      <form className="flex flex-col gap-4 items-center w-full">
+      <form
+        className="flex flex-col gap-4 items-center w-full"
+        onSubmit={submitCreatePost}
+      >
         <TextInput
           type="text"
           id="title"
           placeholder="Tytuł"
           required
           className="w-full"
+          onChange={(e) => setFormData({ ...formData, title: e.target.value })}
         />
-        <Select className="w-full">
+        <Select
+          className="w-full"
+          onChange={(e) => setFormData({ ...formData, category: e.target.value })}
+        >
           <option value="uncategorized">Wybierz kategorię</option>
           <option value="javascript">JavaScript</option>
           <option value="vue">Vue</option>
@@ -115,6 +164,7 @@ export default function CreatePost() {
           required
           placeholder="Wpisz tekst..."
           className="w-full h-72 mb-12"
+          onChange={(value) => setFormData({ ...formData, content: value })}
         />
         <Button
           type="submit"

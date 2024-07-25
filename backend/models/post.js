@@ -13,7 +13,7 @@ const postSchema = new mongoose.Schema(
     },
     image: {
       type: String,
-      deafautl: "https://www.hostinger.com/tutorials/wp-content/uploads/sites/2/2021/09/how-to-write-a-blog-post.png",
+      default: "https://www.hostinger.com/tutorials/wp-content/uploads/sites/2/2021/09/how-to-write-a-blog-post.png",
     },
     author: {
       type: String,
