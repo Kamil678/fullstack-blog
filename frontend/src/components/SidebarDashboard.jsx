@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Sidebar, SidebarItem, SidebarItemGroup, SidebarItems } from "flowbite-react";
-import { HiArrowSmRight, HiUser } from "react-icons/hi";
-import { useDispatch } from "react-redux";
+import { HiArrowSmRight, HiDocumentText, HiUser } from "react-icons/hi";
+import { useDispatch, useSelector } from "react-redux";
 import { signoutSuccess } from "../app/user/userSlice";
 
 export default function SidebarDashboard() {
   const dispatch = useDispatch();
+  const { user } = useSelector((state) => state.user);
   const location = useLocation();
   const [tab, setTab] = useState("");
 
@@ -39,18 +40,29 @@ export default function SidebarDashboard() {
   return (
     <Sidebar className=" w-full md:w-56">
       <SidebarItems>
-        <SidebarItemGroup>
+        <SidebarItemGroup className="flex flex-col gap-1">
           <Link to="/dashboard?tab=profile">
             <SidebarItem
               active={tab === "profile"}
               icon={HiUser}
-              label={"User"}
+              label={user.isAdmin ? "Admin" : "User"}
               labelColor="dark"
               as="div"
             >
               Profil
             </SidebarItem>
           </Link>
+          {user.isAdmin && (
+            <Link to="/dashboard?tab=posts">
+              <SidebarItem
+                active={tab === "posts"}
+                icon={HiDocumentText}
+                as="div"
+              >
+                Posty
+              </SidebarItem>
+            </Link>
+          )}
           <SidebarItem
             icon={HiArrowSmRight}
             className="cursor-pointer"
