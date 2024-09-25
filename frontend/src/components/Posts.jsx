@@ -1,12 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { Table } from "flowbite-react";
+import { Button, Modal, Table } from "flowbite-react";
 import { Link } from "react-router-dom";
+import { HiOutlineExclamationCircle } from "react-icons/hi";
+import { toast } from "react-toastify";
 
 export default function Posts() {
   const { user } = useSelector((state) => state.user);
   const [userPosts, setUserPosts] = useState([]);
   const [showMore, setShowMore] = useState(true);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [postIdToDelete, setPostIdToDelete] = useState("");
   useEffect(() => {
     const fetchAllPosts = async () => {
       try {
@@ -46,6 +50,29 @@ export default function Posts() {
     }
   };
 
+  const handleConfirmDeletePost = async () => {
+    try {
+      const res = await fetch(`api/post/delete/${postIdToDelete}/${user._id}`, {
+        method: "DELETE",
+      });
+      const data = await res.json();
+
+      if (res.ok) {
+        setUserPosts((prev) =>
+          prev.filter((post) => post._id !== postIdToDelete)
+        );
+        console.log(userPosts);
+        setShowDeleteModal(false);
+        toast.success(data);
+      } else {
+        console.log(data.message);
+        toast.error("Nie udało sie usunąć posta.");
+      }
+    } catch (err) {
+      console.log(err.message);
+    }
+  };
+
   return (
     <div className="table-auto md:mx-auto overflow-x-scroll lg:overflow-x-auto p-3 scrollbar scrollbar-track-slate-100 scrollbar-thumb-slate-300 dark:scrollbar-track-slate-700 dark:scrollbar-thumb-slate-500">
       {user.isAdmin && userPosts.length > 0 ? (
@@ -62,7 +89,7 @@ export default function Posts() {
               </Table.HeadCell>
             </Table.Head>
             {userPosts.map((post) => (
-              <Table.Body className="divide-y">
+              <Table.Body className="divide-y" key={post._id}>
                 <Table.Row className="bg-white dark:border-gray-700 dark:bg-gray-800">
                   <Table.Cell>
                     {new Date(post.updatedAt).toLocaleDateString()}
@@ -86,7 +113,13 @@ export default function Posts() {
                   </Table.Cell>
                   <Table.Cell>{post.category}</Table.Cell>
                   <Table.Cell>
-                    <span className="font-medium text-red-500 hover:underline cursor-pointer">
+                    <span
+                      onClick={() => {
+                        setShowDeleteModal(true);
+                        setPostIdToDelete(post._id);
+                      }}
+                      className="font-medium text-red-500 hover:underline cursor-pointer"
+                    >
                       Usuń
                     </span>
                   </Table.Cell>
@@ -116,6 +149,30 @@ export default function Posts() {
       ) : (
         <p>Nie masz jeszcze postów.</p>
       )}
+      <Modal
+        show={showDeleteModal}
+        size="md"
+        onClose={() => setShowDeleteModal(false)}
+        popup
+      >
+        <Modal.Header />
+        <Modal.Body>
+          <div className="text-center">
+            <HiOutlineExclamationCircle className="mx-auto mb-4 h-14 w-14 text-gray-400 dark:text-gray-200" />
+            <h3 className="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
+              Czy jesteś pewien, że chcesz usunąć ten post?
+            </h3>
+            <div className="flex justify-center gap-4">
+              <Button color="failure" onClick={handleConfirmDeletePost}>
+                Tak
+              </Button>
+              <Button color="gray" onClick={() => setShowDeleteModal(false)}>
+                Nie
+              </Button>
+            </div>
+          </div>
+        </Modal.Body>
+      </Modal>
     </div>
   );
 }
