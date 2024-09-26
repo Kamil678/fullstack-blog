@@ -107,3 +107,33 @@ export const deletePost = async (req, res, next) => {
     next(err);
   }
 };
+
+export const editPost = async (req, res, next) => {
+  if (!req.user.isAdmin || req.user.id !== req.params.userId) {
+    return next(
+      errorHandler(
+        403,
+        "You are not allowed to edit post.",
+        "Nie możesz edytować tego posta."
+      )
+    );
+  }
+
+  try {
+    const updatedPost = await Post.findByIdAndUpdate(
+      req.params.postId,
+      {
+        $set: {
+          title: req.body.title,
+          category: req.body.category,
+          image: req.body.image,
+          content: req.body.content,
+        },
+      },
+      { new: true }
+    );
+    res.status(200).json(updatedPost);
+  } catch (err) {
+    next(err);
+  }
+};

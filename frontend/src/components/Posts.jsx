@@ -61,7 +61,6 @@ export default function Posts() {
         setUserPosts((prev) =>
           prev.filter((post) => post._id !== postIdToDelete)
         );
-        console.log(userPosts);
         setShowDeleteModal(false);
         toast.success(data);
       } else {
@@ -125,7 +124,7 @@ export default function Posts() {
                   </Table.Cell>
                   <Table.Cell>
                     <Link
-                      to={`update-post/${post._id}`}
+                      to={`/edit-post/${post._id}`}
                       className="text-teal-500 hover:underline"
                     >
                       <span>Edytuj</span>

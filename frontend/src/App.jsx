@@ -11,6 +11,7 @@ import Footer from "./components/Footer";
 import CreatePost from "./pages/CreatePost";
 import LoggedInRoute from "./components/LoggedInRoute";
 import OnlyAdminRoute from "./components/OnlyAdminRoute";
+import EditPost from "./pages/EditPost";
 
 export default function App() {
   return (
@@ -26,6 +27,7 @@ export default function App() {
         </Route>
         <Route element={<OnlyAdminRoute />}>
           <Route path="/create-post" element={<CreatePost />} />
+          <Route path="/edit-post/:postId" element={<EditPost />} />
         </Route>
         <Route path="/projects" element={<Projects />} />
       </Routes>
