@@ -61,7 +61,7 @@ export default function Users() {
         toast.success(data);
       } else {
         console.log(data.message);
-        toast.error("Nie udało sie usunąć posta.");
+        toast.error("Nie udało sie usunąć użytkownika.");
       }
     } catch (err) {
       console.log(err.message);
