@@ -105,7 +105,7 @@ export const deleteUser = async (req, res, next) => {
 
 export const getUsers = async (req, res, next) => {
   try {
-    if (!req.user.isAdmin || req.user.id !== req.params.userId) {
+    if (!req.user.isAdmin) {
       return next(
         errorHandler(
           403,
@@ -134,7 +134,7 @@ export const getUsers = async (req, res, next) => {
       now.getDate()
     );
 
-    const lastMonthUsers = await Post.countDocuments({
+    const lastMonthUsers = await User.countDocuments({
       createdAt: { $gte: oneMonthAgo },
     });
     res.status(200).json({
