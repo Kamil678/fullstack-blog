@@ -1,7 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import { Sidebar, SidebarItem, SidebarItemGroup, SidebarItems } from "flowbite-react";
-import { HiArrowSmRight, HiDocumentText, HiUser } from "react-icons/hi";
+import {
+  Sidebar,
+  SidebarItem,
+  SidebarItemGroup,
+  SidebarItems,
+} from "flowbite-react";
+import {
+  HiArrowSmRight,
+  HiDocumentText,
+  HiOutlineUserGroup,
+  HiUser,
+} from "react-icons/hi";
 import { useDispatch, useSelector } from "react-redux";
 import { signoutSuccess } from "../app/user/userSlice";
 
@@ -60,6 +70,17 @@ export default function SidebarDashboard() {
                 as="div"
               >
                 Posty
+              </SidebarItem>
+            </Link>
+          )}
+          {user.isAdmin && (
+            <Link to="/dashboard?tab=users">
+              <SidebarItem
+                active={tab === "users"}
+                icon={HiOutlineUserGroup}
+                as="div"
+              >
+                Użytkownicy
               </SidebarItem>
             </Link>
           )}
