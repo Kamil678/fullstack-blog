@@ -4,6 +4,7 @@ import { useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import Comment from "./Comment";
+import { FaExpeditedssl } from "react-icons/fa";
 
 export default function CommentSection({ postId }) {
   const { user } = useSelector((state) => state.user);
@@ -87,6 +88,16 @@ export default function CommentSection({ postId }) {
     }
   };
 
+  const handleEdit = async (comment, editedContent) => {
+    console.log(comment, editedContent);
+    setAllComments(
+      allComments.map((c) =>
+        c._id === comment._id ? { ...c, content: editedContent } : c
+      )
+    );
+    console.log(allComments);
+  };
+
   return (
     <div className="max-w-2xl mx-auto w-full p-3">
       {user ? (
@@ -147,6 +158,7 @@ export default function CommentSection({ postId }) {
               key={comment._id}
               comment={comment}
               onLike={handleLikeComment}
+              onEdit={handleEdit}
             />
           ))}
         </>
