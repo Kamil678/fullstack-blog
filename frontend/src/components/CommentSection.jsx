@@ -1,12 +1,14 @@
 import { Button, Textarea } from "flowbite-react";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { toast } from "react-toastify";
+import Comment from "./Comment";
 
 export default function CommentSection({ postId }) {
   const { user } = useSelector((state) => state.user);
   const [comment, setComment] = useState("");
+  const [allComments, setAllComments] = useState([]);
 
   const handleSubmitForm = async (e) => {
     e.preventDefault();
@@ -25,6 +27,7 @@ export default function CommentSection({ postId }) {
 
       if (res.ok) {
         setComment("");
+        setAllComments([data, ...allComments]);
         toast.success("Pomyślnie dodano komentarz");
       } else {
         toast.error("Nie udało się dodać komentarza");
@@ -34,6 +37,24 @@ export default function CommentSection({ postId }) {
       toast.error("Nie udało się dodać komentarza");
     }
   };
+
+  useEffect(() => {
+    const getAllComments = async () => {
+      try {
+        const res = await fetch(`/api/comment/getComments/${postId}`);
+        if (res.ok) {
+          const data = await res.json();
+          setAllComments(data.comments);
+          console.log(data, allComments);
+        } else {
+          return;
+        }
+      } catch (err) {
+        console.log(err.message);
+      }
+    };
+    getAllComments();
+  }, [postId]);
 
   return (
     <div className="max-w-2xl mx-auto w-full p-3">
@@ -81,6 +102,25 @@ export default function CommentSection({ postId }) {
             </Button>
           </div>
         </form>
+      )}
+      {allComments.length > 0 ? (
+        <>
+          <div className="flex items-center my-5 text-sm gap-2">
+            <p>Ilość komentarzy: </p>
+            <div className="border border-gray-500 py-1 px-2 rounded-md">
+              <p>{allComments.length}</p>
+            </div>
+          </div>
+          {allComments.map((comment) => (
+            <Comment key={comment._id} comment={comment} />
+          ))}
+        </>
+      ) : (
+        <div>
+          <p className="text-sm my-5">
+            Nie ma jeszcze komentarzy do tego posta
+          </p>
+        </div>
       )}
     </div>
   );

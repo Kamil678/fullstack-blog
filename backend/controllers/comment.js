@@ -32,7 +32,19 @@ export const createComment = async (req, res, next) => {
 
     const savedComment = await newComment.save();
 
-    res.status(201).json({ success: true, comment: newComment });
+    res.status(201).json({ success: true, comment: savedComment });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const getComments = async (req, res, next) => {
+  try {
+    const comments = await Comment.find({ postId: req.params.postId }).sort({
+      createdAt: -1,
+    });
+
+    res.status(200).json({ success: true, comments: comments });
   } catch (err) {
     next(err);
   }
