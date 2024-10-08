@@ -1,15 +1,19 @@
-import { Button, Textarea } from "flowbite-react";
+import { Button, Modal, Textarea } from "flowbite-react";
 import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import Comment from "./Comment";
 import { FaExpeditedssl } from "react-icons/fa";
+import { HiOutlineExclamationCircle } from "react-icons/hi";
 
 export default function CommentSection({ postId }) {
   const { user } = useSelector((state) => state.user);
   const [comment, setComment] = useState("");
   const [allComments, setAllComments] = useState([]);
+  const [showDeleteCommentModal, setShowDeleteCommentModal] = useState(false);
+  const [commentIdToDelete, setCommentIdToDelete] = useState(null);
 
   const navigate = useNavigate();
 
@@ -89,13 +93,37 @@ export default function CommentSection({ postId }) {
   };
 
   const handleEdit = async (comment, editedContent) => {
-    console.log(comment, editedContent);
     setAllComments(
       allComments.map((c) =>
         c._id === comment._id ? { ...c, content: editedContent } : c
       )
     );
-    console.log(allComments);
+  };
+
+  const handleConfirmDeleteComment = async (commentId) => {
+    try {
+      if (!user) {
+        navigate("/sign-in");
+        return;
+      }
+
+      const res = await fetch(`/api/comment/delete/${commentId}`, {
+        method: "DELETE",
+      });
+
+      if (res.ok) {
+        const data = await res.json();
+        setAllComments(
+          allComments.filter((comment) => comment._id !== commentId)
+        );
+        setShowDeleteCommentModal(false);
+        toast.success(data);
+      } else {
+        toast.error("Nie udało się usunąć komentarza");
+      }
+    } catch (err) {
+      console.log(err.message);
+    }
   };
 
   return (
@@ -159,6 +187,10 @@ export default function CommentSection({ postId }) {
               comment={comment}
               onLike={handleLikeComment}
               onEdit={handleEdit}
+              onDelete={(commentId) => {
+                setShowDeleteCommentModal(true);
+                setCommentIdToDelete(commentId);
+              }}
             />
           ))}
         </>
@@ -169,6 +201,37 @@ export default function CommentSection({ postId }) {
           </p>
         </div>
       )}
+      <Modal
+        show={showDeleteCommentModal}
+        size="md"
+        onClose={() => setShowDeleteCommentModal(false)}
+        popup
+      >
+        <Modal.Header />
+        <Modal.Body>
+          <div className="text-center">
+            <HiOutlineExclamationCircle className="mx-auto mb-4 h-14 w-14 text-gray-400 dark:text-gray-200" />
+            <h3 className="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">
+              Czy jesteś pewien, że chcesz usunąć ten komentarz?
+            </h3>
+            <div className="flex justify-center gap-4">
+              <Button
+                color="failure"
+                onClick={() => handleConfirmDeleteComment(commentIdToDelete)}
+              >
+                Tak
+              </Button>
+              <Button
+                color="gray"
+                onClick={() => setShowDeleteCommentModal(false)}
+              >
+                Nie
+              </Button>
+            </div>
+          </div>
+        </Modal.Body>
+      </Modal>
+      <ToastContainer />
     </div>
   );
 }
