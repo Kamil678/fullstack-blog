@@ -12,10 +12,13 @@ import CreatePost from "./pages/CreatePost";
 import LoggedInRoute from "./components/LoggedInRoute";
 import OnlyAdminRoute from "./components/OnlyAdminRoute";
 import EditPost from "./pages/EditPost";
+import Post from "./pages/Post";
+import ScrollToTop from "./components/ScrollToTop";
 
 export default function App() {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <Header />
       <Routes>
         <Route path="/" element={<Home />} />
@@ -30,6 +33,7 @@ export default function App() {
           <Route path="/edit-post/:postId" element={<EditPost />} />
         </Route>
         <Route path="/projects" element={<Projects />} />
+        <Route path="/post/:postSlug" element={<Post />} />
       </Routes>
       <Footer />
     </BrowserRouter>

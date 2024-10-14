@@ -1,4 +1,13 @@
-import { Avatar, Button, Dropdown, DropdownDivider, DropdownHeader, DropdownItem, Navbar, TextInput } from "flowbite-react";
+import {
+  Avatar,
+  Button,
+  Dropdown,
+  DropdownDivider,
+  DropdownHeader,
+  DropdownItem,
+  Navbar,
+  TextInput,
+} from "flowbite-react";
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { AiOutlineSearch } from "react-icons/ai";
@@ -17,7 +26,7 @@ export default function Header() {
 
   const handleSignout = async () => {
     try {
-      const response = await fetch("api/auth/signout", {
+      const response = await fetch("/api/auth/signout", {
         method: "POST",
       });
 
@@ -44,11 +53,7 @@ export default function Header() {
           className="hidden lg:inline "
         />
       </form>
-      <Button
-        className="w-12 h-8 lg:hidden"
-        color="gray"
-        pill
-      >
+      <Button className="w-12 h-8 lg:hidden" color="gray" pill>
         <AiOutlineSearch />
       </Button>
       <div className="flex items-center	gap-2.5 md:order-2">
@@ -64,12 +69,7 @@ export default function Header() {
           <Dropdown
             arrowIcon={false}
             inline
-            label={
-              <Avatar
-                alt="User avatar"
-                img={user.picture}
-              />
-            }
+            label={<Avatar alt="User avatar" img={user.picture} />}
           >
             <DropdownHeader>
               <div className="flex gap-2 items-center">
@@ -78,7 +78,9 @@ export default function Header() {
               </div>
               <div className="flex gap-2 items-center">
                 <MdEmail className="w-4 h-4" />
-                <span className="block text-sm font-medium truncate">{user.email}</span>
+                <span className="block text-sm font-medium truncate">
+                  {user.email}
+                </span>
               </div>
             </DropdownHeader>
             <Link to={"/dashboard?tab=profile"}>
@@ -89,10 +91,7 @@ export default function Header() {
           </Dropdown>
         ) : (
           <Link to="/sign-in">
-            <Button
-              gradientDuoTone="purpleToBlue"
-              outline
-            >
+            <Button gradientDuoTone="purpleToBlue" outline>
               Zaloguj się
             </Button>
           </Link>
@@ -100,22 +99,13 @@ export default function Header() {
         <Navbar.Toggle />
       </div>
       <Navbar.Collapse>
-        <Navbar.Link
-          active={path === "/"}
-          as={"div"}
-        >
+        <Navbar.Link active={path === "/"} as={"div"}>
           <Link to="/">Home</Link>
         </Navbar.Link>
-        <Navbar.Link
-          active={path === "/about"}
-          as={"div"}
-        >
+        <Navbar.Link active={path === "/about"} as={"div"}>
           <Link to="/about">About</Link>
         </Navbar.Link>
-        <Navbar.Link
-          active={path === "/projects"}
-          as={"div"}
-        >
+        <Navbar.Link active={path === "/projects"} as={"div"}>
           <Link to="/projects">Projects</Link>
         </Navbar.Link>
       </Navbar.Collapse>
