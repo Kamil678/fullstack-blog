@@ -15,6 +15,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { signoutSuccess } from "../app/user/userSlice";
 import { LiaComments } from "react-icons/lia";
+import { LuLayoutDashboard } from "react-icons/lu";
 
 export default function SidebarDashboard() {
   const dispatch = useDispatch();
@@ -65,6 +66,15 @@ export default function SidebarDashboard() {
           </Link>
           {user.isAdmin && (
             <>
+              <Link to="/dashboard?tab=dashboard">
+                <SidebarItem
+                  active={tab === "dashboard"}
+                  icon={LuLayoutDashboard}
+                  as="div"
+                >
+                  Dashboard
+                </SidebarItem>
+              </Link>
               <Link to="/dashboard?tab=posts">
                 <SidebarItem
                   active={tab === "posts"}

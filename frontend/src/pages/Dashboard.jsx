@@ -6,6 +6,7 @@ import Posts from "../components/Posts";
 import Users from "../components/Users";
 import { ToastContainer } from "react-toastify";
 import Comments from "../components/Comments";
+import DashboardComponent from "../components/DashboardComponent";
 
 export default function Dashboard() {
   const location = useLocation();
@@ -24,6 +25,7 @@ export default function Dashboard() {
         <SidebarDashboard />
       </div>
       {tab === "profile" && <Profile />}
+      {tab === "dashboard" && <DashboardComponent />}
       {tab === "posts" && <Posts />}
       {tab === "users" && <Users />}
       {tab === "comments" && <Comments />}
