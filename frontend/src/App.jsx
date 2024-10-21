@@ -14,6 +14,7 @@ import OnlyAdminRoute from "./components/OnlyAdminRoute";
 import EditPost from "./pages/EditPost";
 import Post from "./pages/Post";
 import ScrollToTop from "./components/ScrollToTop";
+import Search from "./pages/Search";
 
 export default function App() {
   return (
@@ -22,6 +23,7 @@ export default function App() {
       <Header />
       <Routes>
         <Route path="/" element={<Home />} />
+        <Route path="/search" element={<Search />} />
         <Route path="/sign-in" element={<Signin />} />
         <Route path="/sign-up" element={<Signup />} />
         <Route path="/about" element={<About />} />
