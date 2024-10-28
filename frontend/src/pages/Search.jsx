@@ -23,7 +23,7 @@ export default function Search() {
     if (searchTermFromUrl || categoryFromUrl || sortFromUrl) {
       setFormData({
         ...formData,
-        searchTerm: searchTermFromUrl,
+        searchTerm: searchTermFromUrl === null ? "" : searchTermFromUrl,
         category: categoryFromUrl === null ? "uncategorized" : categoryFromUrl,
         sort: sortFromUrl === null ? "desc" : sortFromUrl,
       });

@@ -35,7 +35,7 @@ export default function About() {
       </div>
       <div className="lg:w-1/2 shadow-lg">
         <img
-          src={"src/assets/kp.jpg"}
+          src={"./assets/kp.jpg"}
           alt="Blog owner image"
           className="w-full"
         />
