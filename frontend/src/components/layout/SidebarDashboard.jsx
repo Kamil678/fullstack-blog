@@ -1,19 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import {
-  Sidebar,
-  SidebarItem,
-  SidebarItemGroup,
-  SidebarItems,
-} from "flowbite-react";
-import {
-  HiArrowSmRight,
-  HiDocumentText,
-  HiOutlineUserGroup,
-  HiUser,
-} from "react-icons/hi";
+import { Sidebar, SidebarItem, SidebarItemGroup, SidebarItems } from "flowbite-react";
+import { HiArrowSmRight, HiDocumentText, HiOutlineUserGroup, HiUser } from "react-icons/hi";
 import { useDispatch, useSelector } from "react-redux";
-import { signoutSuccess } from "../app/user/userSlice";
+import { signoutSuccess } from "../../app/user/userSlice";
 import { LiaComments } from "react-icons/lia";
 import { LuLayoutDashboard } from "react-icons/lu";
 
@@ -54,61 +44,35 @@ export default function SidebarDashboard() {
       <SidebarItems>
         <SidebarItemGroup className="flex flex-col gap-1">
           <Link to="/dashboard?tab=profile">
-            <SidebarItem
-              active={tab === "profile"}
-              icon={HiUser}
-              label={user.isAdmin ? "Admin" : "User"}
-              labelColor="dark"
-              as="div"
-            >
+            <SidebarItem active={tab === "profile"} icon={HiUser} label={user.isAdmin ? "Admin" : "User"} labelColor="dark" as="div">
               Profil
             </SidebarItem>
           </Link>
           {user.isAdmin && (
             <>
               <Link to="/dashboard?tab=dashboard">
-                <SidebarItem
-                  active={tab === "dashboard"}
-                  icon={LuLayoutDashboard}
-                  as="div"
-                >
+                <SidebarItem active={tab === "dashboard"} icon={LuLayoutDashboard} as="div">
                   Dashboard
                 </SidebarItem>
               </Link>
               <Link to="/dashboard?tab=posts">
-                <SidebarItem
-                  active={tab === "posts"}
-                  icon={HiDocumentText}
-                  as="div"
-                >
+                <SidebarItem active={tab === "posts"} icon={HiDocumentText} as="div">
                   Posty
                 </SidebarItem>
               </Link>
               <Link to="/dashboard?tab=users">
-                <SidebarItem
-                  active={tab === "users"}
-                  icon={HiOutlineUserGroup}
-                  as="div"
-                >
+                <SidebarItem active={tab === "users"} icon={HiOutlineUserGroup} as="div">
                   Użytkownicy
                 </SidebarItem>
               </Link>
               <Link to="/dashboard?tab=comments">
-                <SidebarItem
-                  active={tab === "comments"}
-                  icon={LiaComments}
-                  as="div"
-                >
+                <SidebarItem active={tab === "comments"} icon={LiaComments} as="div">
                   Komentarze
                 </SidebarItem>
               </Link>
             </>
           )}
-          <SidebarItem
-            icon={HiArrowSmRight}
-            className="cursor-pointer"
-            onClick={handleSignout}
-          >
+          <SidebarItem icon={HiArrowSmRight} className="cursor-pointer" onClick={handleSignout}>
             Wyloguj się
           </SidebarItem>
         </SidebarItemGroup>

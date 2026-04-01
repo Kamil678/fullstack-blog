@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Logo from "../components/Logo";
+import Logo from "../components/ui/Logo";
 import { Alert, Button, Label, Spinner, TextInput } from "flowbite-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
@@ -71,33 +71,16 @@ export default function SignIn() {
           <p className="text-sm mt-5">Zaloguj się za pomocą emaila i hasła lub poprzez Google.</p>
         </div>
         <div className="flex-1">
-          <form
-            className="flex flex-col gap-3"
-            onSubmit={submitForm}
-          >
+          <form className="flex flex-col gap-3" onSubmit={submitForm}>
             <div>
               <Label value="Email" />
-              <TextInput
-                type="email"
-                placeholder="Wpisz email"
-                id="email"
-                onChange={changeInput}
-              />
+              <TextInput type="email" placeholder="Wpisz email" id="email" onChange={changeInput} />
             </div>
             <div>
               <Label value="Hasło" />
-              <TextInput
-                type="password"
-                placeholder="Wpisz hasło"
-                id="password"
-                onChange={changeInput}
-              />
+              <TextInput type="password" placeholder="Wpisz hasło" id="password" onChange={changeInput} />
             </div>
-            <Button
-              gradientDuoTone="purpleToBlue"
-              type="submit"
-              disabled={loading}
-            >
+            <Button gradientDuoTone="purpleToBlue" type="submit" disabled={loading}>
               {loading ? (
                 <>
                   <Spinner size="sm" />
@@ -111,10 +94,7 @@ export default function SignIn() {
           </form>
           <div className="flex gap-1 text-sm mt-5">
             <span>Nie masz jeszcze konta?</span>
-            <Link
-              to="/sign-up"
-              className="text-blue-500"
-            >
+            <Link to="/sign-up" className="text-blue-500">
               Stwórz konto
             </Link>
           </div>

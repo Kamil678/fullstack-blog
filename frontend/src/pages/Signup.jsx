@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Logo from "../components/Logo";
+import Logo from "../components/ui/Logo";
 import { Alert, Button, Label, Spinner, TextInput } from "flowbite-react";
 import { Link, useNavigate } from "react-router-dom";
 import GoogleAuth from "../components/GoogleAuth";
@@ -64,42 +64,20 @@ export default function Signup() {
           <p className="text-sm mt-5">Stwórz swoje konto za pomocą emaila i hasła lub zaloguj się poprzez Google.</p>
         </div>
         <div className="flex-1">
-          <form
-            className="flex flex-col gap-3"
-            onSubmit={submitForm}
-          >
+          <form className="flex flex-col gap-3" onSubmit={submitForm}>
             <div>
               <Label value="Email" />
-              <TextInput
-                type="email"
-                placeholder="Wpisz email"
-                id="email"
-                onChange={changeInput}
-              />
+              <TextInput type="email" placeholder="Wpisz email" id="email" onChange={changeInput} />
             </div>
             <div>
               <Label value="Nazwa użytkownika" />
-              <TextInput
-                type="text"
-                placeholder="Wpisz nazwę użytkownika"
-                id="username"
-                onChange={changeInput}
-              />
+              <TextInput type="text" placeholder="Wpisz nazwę użytkownika" id="username" onChange={changeInput} />
             </div>
             <div>
               <Label value="Hasło" />
-              <TextInput
-                type="password"
-                placeholder="Wpisz hasło"
-                id="password"
-                onChange={changeInput}
-              />
+              <TextInput type="password" placeholder="Wpisz hasło" id="password" onChange={changeInput} />
             </div>
-            <Button
-              gradientDuoTone="purpleToBlue"
-              type="submit"
-              disabled={loading}
-            >
+            <Button gradientDuoTone="purpleToBlue" type="submit" disabled={loading}>
               {loading ? (
                 <>
                   <Spinner size="sm" />
@@ -109,22 +87,16 @@ export default function Signup() {
                 "Stwórz konto"
               )}
             </Button>
-            <GoogleAuth/>
+            <GoogleAuth />
           </form>
           <div className="flex gap-1 text-sm mt-5">
             <span>Masz już konto?</span>
-            <Link
-              to="/sign-in"
-              className="text-blue-500"
-            >
+            <Link to="/sign-in" className="text-blue-500">
               Zaloguj się
             </Link>
           </div>
           {errMessage && (
-            <Alert
-              className="mt-5"
-              color="failure"
-            >
+            <Alert className="mt-5" color="failure">
               {errMessage}
             </Alert>
           )}

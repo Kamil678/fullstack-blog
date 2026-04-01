@@ -1,7 +1,7 @@
 import { Button, Select, TextInput } from "flowbite-react";
 import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import PostCard from "../components/PostCard";
+import PostCard from "../components/posts/PostCard";
 
 export default function Search() {
   const location = useLocation();
@@ -117,15 +117,8 @@ export default function Search() {
             />
           </div>
           <div className="flex flex-col gap-1">
-            <label className="whitespace-nowrap font-semibold">
-              Kategoria:
-            </label>
-            <Select
-              onChange={handleChange}
-              value={formData.category}
-              id="category"
-              className="w-full"
-            >
+            <label className="whitespace-nowrap font-semibold">Kategoria:</label>
+            <Select onChange={handleChange} value={formData.category} id="category" className="w-full">
               <option value="uncategorized">Wybierz kategorię</option>
               <option value="javascript">JavaScript</option>
               <option value="vue">Vue</option>
@@ -135,48 +128,25 @@ export default function Search() {
             </Select>
           </div>
           <div className="flex flex-col gap-1">
-            <label className="whitespace-nowrap font-semibold">
-              Sortowanie:
-            </label>
-            <Select
-              onChange={handleChange}
-              value={formData.sort}
-              id="sort"
-              className="w-full"
-            >
+            <label className="whitespace-nowrap font-semibold">Sortowanie:</label>
+            <Select onChange={handleChange} value={formData.sort} id="sort" className="w-full">
               <option value="desc">Od najnowszych</option>
               <option value="asc">Od najstarszych</option>
             </Select>
           </div>
-          <Button
-            type="submit"
-            outline
-            gradientDuoTone="cyanToBlue"
-            className="h-fit"
-          >
+          <Button type="submit" outline gradientDuoTone="cyanToBlue" className="h-fit">
             Filtruj
           </Button>
         </form>
       </div>
       <div className="w-full">
-        <h1 className="text-3xl text-center font-semibold border-gray-500 p-3 mt-5 ">
-          Szukane artykuły
-        </h1>
+        <h1 className="text-3xl text-center font-semibold border-gray-500 p-3 mt-5 ">Szukane artykuły</h1>
         <div className="p-7 flex flex-wrap gap-4">
-          {!loading && posts.length === 0 && (
-            <p className="text-xl text-gray-500">
-              Nie znaleziono żadnych artykułów.
-            </p>
-          )}
+          {!loading && posts.length === 0 && <p className="text-xl text-gray-500">Nie znaleziono żadnych artykułów.</p>}
           {loading && <p className="text-xl text-gray-500">Wczytywanie...</p>}
-          {!loading &&
-            posts &&
-            posts.map((post) => <PostCard key={post._id} post={post} />)}
+          {!loading && posts && posts.map((post) => <PostCard key={post._id} post={post} />)}
           {showMore && (
-            <button
-              onClick={handleShowMore}
-              className="w-full p-6 text-teal-500 text-lg hover:underline"
-            >
+            <button onClick={handleShowMore} className="w-full p-6 text-teal-500 text-lg hover:underline">
               Pokaż więcej
             </button>
           )}

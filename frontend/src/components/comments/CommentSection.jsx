@@ -83,8 +83,8 @@ export default function CommentSection({ postId }) {
                   likes: data.likes,
                   numberOfLikes: data.likes.length,
                 }
-              : comment
-          )
+              : comment,
+          ),
         );
       }
     } catch (err) {
@@ -93,11 +93,7 @@ export default function CommentSection({ postId }) {
   };
 
   const handleEdit = async (comment, editedContent) => {
-    setAllComments(
-      allComments.map((c) =>
-        c._id === comment._id ? { ...c, content: editedContent } : c
-      )
-    );
+    setAllComments(allComments.map((c) => (c._id === comment._id ? { ...c, content: editedContent } : c)));
   };
 
   const handleConfirmDeleteComment = async (commentId) => {
@@ -113,9 +109,7 @@ export default function CommentSection({ postId }) {
 
       if (res.ok) {
         const data = await res.json();
-        setAllComments(
-          allComments.filter((comment) => comment._id !== commentId)
-        );
+        setAllComments(allComments.filter((comment) => comment._id !== commentId));
         setShowDeleteCommentModal(false);
         toast.success(data);
       } else {
@@ -131,15 +125,8 @@ export default function CommentSection({ postId }) {
       {user ? (
         <div className="flex items-center gap-1 my-5 text-gray-500 text-sm">
           <p>Zalogowany użytkownik:</p>
-          <img
-            src={user.picture}
-            alt="Logged user picture"
-            className="h-7 w-7 object-cover rounded-full"
-          />
-          <Link
-            to="/dashboard?tab=profile"
-            className="text-xs text-cyan-600 hover:underline"
-          >
+          <img src={user.picture} alt="Logged user picture" className="h-7 w-7 object-cover rounded-full" />
+          <Link to="/dashboard?tab=profile" className="text-xs text-cyan-600 hover:underline">
             {user.username}
           </Link>
         </div>
@@ -154,10 +141,7 @@ export default function CommentSection({ postId }) {
         </div>
       )}
       {user && (
-        <form
-          className="border border-teal-500 rounded-md p-3"
-          onSubmit={handleSubmitForm}
-        >
+        <form className="border border-teal-500 rounded-md p-3" onSubmit={handleSubmitForm}>
           <Textarea
             placeholder="Dodaj komentarz..."
             rows="4"
@@ -196,17 +180,10 @@ export default function CommentSection({ postId }) {
         </>
       ) : (
         <div>
-          <p className="text-sm my-5">
-            Nie ma jeszcze komentarzy do tego posta
-          </p>
+          <p className="text-sm my-5">Nie ma jeszcze komentarzy do tego posta</p>
         </div>
       )}
-      <Modal
-        show={showDeleteCommentModal}
-        size="md"
-        onClose={() => setShowDeleteCommentModal(false)}
-        popup
-      >
+      <Modal show={showDeleteCommentModal} size="md" onClose={() => setShowDeleteCommentModal(false)} popup>
         <Modal.Header />
         <Modal.Body>
           <div className="text-center">
@@ -215,16 +192,10 @@ export default function CommentSection({ postId }) {
               Czy jesteś pewien, że chcesz usunąć ten komentarz?
             </h3>
             <div className="flex justify-center gap-4">
-              <Button
-                color="failure"
-                onClick={() => handleConfirmDeleteComment(commentIdToDelete)}
-              >
+              <Button color="failure" onClick={() => handleConfirmDeleteComment(commentIdToDelete)}>
                 Tak
               </Button>
-              <Button
-                color="gray"
-                onClick={() => setShowDeleteCommentModal(false)}
-              >
+              <Button color="gray" onClick={() => setShowDeleteCommentModal(false)}>
                 Nie
               </Button>
             </div>

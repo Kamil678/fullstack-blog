@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
-import SidebarDashboard from "../components/SidebarDashboard";
+import SidebarDashboard from "../components/layout/SidebarDashboard";
 import Profile from "../components/Profile";
 import Posts from "../components/Posts";
 import Users from "../components/Users";
 import { ToastContainer } from "react-toastify";
-import Comments from "../components/Comments";
+import Comments from "../components/comments/Comments";
 import DashboardComponent from "../components/DashboardComponent";
 
 export default function Dashboard() {

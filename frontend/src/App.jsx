@@ -6,13 +6,13 @@ import Dashboard from "./pages/Dashboard";
 import Projects from "./pages/Projects";
 import Signin from "./pages/Signin";
 import Signup from "./pages/Signup";
-import Header from "./components/Header";
-import Footer from "./components/Footer";
+import Header from "./components/layout/Header";
+import Footer from "./components/layout/Footer";
 import CreatePost from "./pages/CreatePost";
 import LoggedInRoute from "./components/LoggedInRoute";
 import OnlyAdminRoute from "./components/OnlyAdminRoute";
 import EditPost from "./pages/EditPost";
-import Post from "./pages/Post";
+import Post from "./components/posts/Post";
 import ScrollToTop from "./components/ScrollToTop";
 import Search from "./pages/Search";
 
