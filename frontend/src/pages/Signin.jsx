@@ -1,114 +1,91 @@
-import React, { useState } from "react";
-import Logo from "../components/ui/Logo";
-import { Alert, Button, Label, Spinner, TextInput } from "flowbite-react";
-import { Link, useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { startSignIn, successSignIn, failureSignIn } from "../app/user/userSlice";
-import GoogleAuth from "../components/GoogleAuth";
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { useState } from "react";
+import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
+import { HiOutlineEye } from "react-icons/hi2";
+import AuthLayout, { Divider } from "../components/auth/AuthLayout";
+import GoogleButton from "../components/auth/GoogleButton";
+import Button from "../components/ui/Button";
+import { Input } from "../components/ui/Field";
+import Seo from "../components/ui/Seo";
+import { api } from "../lib/api";
+import { useErrorMessage } from "../hooks/useErrorMessage";
+import { useAuthRedirect } from "../hooks/useAuthRedirect";
 
-export default function SignIn() {
-  const [formData, setFormData] = useState({});
-  const { loading, error: errMessage } = useSelector((state) => state.user);
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
+export default function Signin() {
+  const { t } = useTranslation();
+  const errorMessage = useErrorMessage();
+  const onSignedIn = useAuthRedirect();
+  const [form, setForm] = useState({ email: "", password: "" });
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(null);
 
-  const changeInput = (e) => {
-    setFormData({ ...formData, [e.target.id]: e.target.value.trim() });
-  };
+  const change = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
-  const getError = (message) => {
-    if (message.includes("duplicate key error collection")) {
-      return "Użytkownik z takim emeilem lub nazwą już istnieje.";
-    } else {
-      return message;
-    }
-  };
-
-  const submitForm = async (e) => {
-    e.preventDefault();
-
-    if (!formData.email || !formData.password) {
-      dispatch(failureSignIn("Proszę uzupełnić wszystkie wymagane pola."));
-      toast.error("Proszę uzupełnić wszystkie wymagane pola.");
-      return;
-    }
-
+  const run = async (kind, request) => {
+    setError(null);
+    setLoading(kind);
     try {
-      dispatch(startSignIn());
-
-      const response = await fetch("api/auth/signin", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(formData),
-      });
-
-      const data = await response.json();
-
-      if (data.success === false) {
-        dispatch(failureSignIn(data.errMessage));
-        toast.error(data.errMessage);
-        return;
-      }
-      //setLoading(false);
-
-      if (response.ok) {
-        dispatch(successSignIn(data));
-        navigate("/");
-      }
+      onSignedIn(await request());
     } catch (err) {
-      dispatch(failureSignIn(err.errMessage));
-      toast.error(err.errMessage);
+      setError(errorMessage(err));
+    } finally {
+      setLoading(null);
     }
   };
+
+  const submit = (e) => {
+    e.preventDefault();
+    run("form", () => api("/auth/signin", { method: "POST", body: { ...form, email: form.email.trim() } }));
+  };
+
+  const demo = () => run("demo", () => api("/auth/demo", { method: "POST" }));
 
   return (
-    <div className="min-h-screen mt-60">
-      <div className="max-w-7xl p-3 mx-auto flex flex-col md:flex-row md:items-center gap-5 justify-center">
-        <div className="flex-1">
-          <Logo textSize="text-4xl" />
-          <p className="text-sm mt-5">Zaloguj się za pomocą emaila i hasła lub poprzez Google.</p>
-        </div>
-        <div className="flex-1">
-          <form className="flex flex-col gap-3" onSubmit={submitForm}>
-            <div>
-              <Label value="Email" />
-              <TextInput type="email" placeholder="Wpisz email" id="email" onChange={changeInput} />
-            </div>
-            <div>
-              <Label value="Hasło" />
-              <TextInput type="password" placeholder="Wpisz hasło" id="password" onChange={changeInput} />
-            </div>
-            <Button gradientDuoTone="purpleToBlue" type="submit" disabled={loading}>
-              {loading ? (
-                <>
-                  <Spinner size="sm" />
-                  <span className="pl-3">Logowanie...</span>
-                </>
-              ) : (
-                "Zaloguj się"
-              )}
-            </Button>
-            <GoogleAuth></GoogleAuth>
-          </form>
-          <div className="flex gap-1 text-sm mt-5">
-            <span>Nie masz jeszcze konta?</span>
-            <Link to="/sign-up" className="text-blue-500">
-              Stwórz konto
-            </Link>
-          </div>
-          {/* {errMessage && (
-            <Alert
-              className="mt-5"
-              color="failure"
-            >
-              {errMessage}
-            </Alert>
-          )} */}
-        </div>
+    <AuthLayout
+      title={t("auth.signInTitle")}
+      description={t("auth.signInDescription")}
+      footer={
+        <>
+          {t("auth.noAccount")}{" "}
+          <Link to="/sign-up" className="font-medium text-gray-900 underline-offset-4 hover:underline dark:text-white">
+            {t("auth.createAccount")}
+          </Link>
+        </>
+      }
+    >
+      <Seo title={t("auth.signInTitle")} />
+      <div className="rounded-xl border border-amber-200 bg-amber-50 p-4 dark:border-amber-500/20 dark:bg-amber-500/5">
+        <p className="text-sm font-medium text-amber-900 dark:text-amber-200">{t("auth.demoTitle")}</p>
+        <p className="mt-1 text-xs text-amber-800/80 dark:text-amber-200/70">{t("auth.demoDescription")}</p>
+        <Button size="sm" variant="secondary" className="mt-3" onClick={demo} loading={loading === "demo"}>
+          {loading !== "demo" && <HiOutlineEye className="h-4 w-4" />}
+          {t("auth.demoButton")}
+        </Button>
       </div>
-      <ToastContainer />
-    </div>
+
+      <Divider label={t("auth.or")} />
+
+      <form onSubmit={submit} className="flex flex-col gap-4" noValidate>
+        <Input label={t("auth.email")} type="email" name="email" autoComplete="email" value={form.email} onChange={change} required />
+        <Input
+          label={t("auth.password")}
+          type="password"
+          name="password"
+          autoComplete="current-password"
+          value={form.password}
+          onChange={change}
+          required
+        />
+        {error && (
+          <p role="alert" className="rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700 dark:bg-red-500/10 dark:text-red-300">
+            {error}
+          </p>
+        )}
+        <Button type="submit" className="w-full" loading={loading === "form"} disabled={!form.email || !form.password}>
+          {t("auth.signIn")}
+        </Button>
+        <GoogleButton onSuccess={onSignedIn} />
+      </form>
+    </AuthLayout>
   );
 }
